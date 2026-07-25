@@ -1,0 +1,53 @@
+/* Toast.module.css */
+
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 2000;
+    animation: slideIn 0.25s ease;
+}
+
+.toast button {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.7;
+    padding: 0 4px;
+}
+
+.toast button:hover {
+    opacity: 1;
+}
+
+.success {
+    background: #14532d;
+    color: #4ade80;
+    border: 1px solid #166534;
+}
+
+.error {
+    background: #450a0a;
+    color: #f87171;
+    border: 1px solid #7f1d1d;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
