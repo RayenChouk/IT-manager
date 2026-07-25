@@ -1,5 +1,8 @@
 # main.py
 # Application entry point. Registers routers and configures CORS.
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

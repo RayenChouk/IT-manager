@@ -25,7 +25,8 @@ function LocationForm({ initial, onSubmit, onClose }) {
         setSaving(true);
         setError("");
         try {
-            await onSubmit({ name: form.name, x: 50, y: 50 });
+            await onSubmit({ name: form.name });
+
             onClose();
         } catch (err) {
             setError(err.message);

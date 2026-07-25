@@ -11,8 +11,7 @@ from datetime import datetime, date
 
 class LocationBase(BaseModel):
     name: str
-    x: float = 50.0
-    y: float = 50.0
+   
 
 
 class LocationCreate(LocationBase):
@@ -21,8 +20,7 @@ class LocationCreate(LocationBase):
 
 class LocationUpdate(BaseModel):
     name: Optional[str] = None
-    x: Optional[float] = None
-    y: Optional[float] = None
+    
 
 
 class LocationOut(LocationBase):

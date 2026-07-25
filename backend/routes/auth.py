@@ -2,6 +2,7 @@
 # Handles user login and JWT token creation.
 # We use python-jose for JWT and passlib for password hashing.
 
+import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -16,7 +17,9 @@ from database import get_db
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 # Security configuration
-SECRET_KEY = "change-this-secret-key-in-production"
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY must be set in .env")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 8  # 8-hour sessions
 
@@ -56,6 +59,7 @@ def get_current_user(
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
     user = crud.get_user_by_username(db, username)
+    
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return username
@@ -64,6 +68,7 @@ def get_current_user(
 @router.post("/login", response_model=schemas.TokenResponse)
 def login(data: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = crud.get_user_by_username(db, data.username)
+    
     if not user or not verify_password(data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

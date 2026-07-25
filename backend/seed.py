@@ -23,12 +23,12 @@ def seed():
 
     # ── Locations ──────────────────────────────────────────
     locations = [
-        models.Location(name="Server Room",     x=20.0, y=15.0),
-        models.Location(name="IT Office",       x=45.0, y=25.0),
-        models.Location(name="HR Department",   x=70.0, y=20.0),
-        models.Location(name="Meeting Room A",  x=30.0, y=60.0),
-        models.Location(name="Reception",       x=50.0, y=80.0),
-        models.Location(name="Finance Dept",    x=75.0, y=65.0),
+        models.Location(name="Server Room",     ),
+        models.Location(name="IT Office",      ),
+        models.Location(name="HR Department",  ),
+        models.Location(name="Meeting Room A",  ),
+        models.Location(name="Reception",      ),
+        models.Location(name="Finance Dept",    ),
     ]
     db.add_all(locations)
     db.flush()  # Populate IDs before referencing them

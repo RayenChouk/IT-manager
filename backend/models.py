@@ -17,8 +17,7 @@ class Location(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False, unique=True)
-    x = Column(Float, default=50.0)   # horizontal position on the map
-    y = Column(Float, default=50.0)   # vertical position on the map
+   
 
     # One location can have many pieces of equipment.
     equipment = relationship("Equipment", back_populates="location")

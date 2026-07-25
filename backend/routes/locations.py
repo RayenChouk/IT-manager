@@ -9,6 +9,8 @@ import schemas
 from database import get_db
 from routes.auth import get_current_user
 
+from sqlalchemy.exc import IntegrityError
+
 router = APIRouter(prefix="/locations", tags=["Locations"])
 
 
@@ -38,7 +40,12 @@ def create_location(
     db: Session = Depends(get_db),
     _: str = Depends(get_current_user),
 ):
-    return crud.create_location(db, data)
+    try:
+        return crud.create_location(db, data)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="This location name is already in use")
+
 
 
 @router.put("/{location_id}", response_model=schemas.LocationOut)
@@ -48,10 +55,14 @@ def update_location(
     db: Session = Depends(get_db),
     _: str = Depends(get_current_user),
 ):
-    location = crud.update_location(db, location_id, data)
-    if not location:
-        raise HTTPException(status_code=404, detail="Location not found")
-    return location
+    try:
+        location = crud.update_location(db, location_id, data)
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        return location
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="This location name is already in use")
 
 
 @router.delete("/{location_id}", status_code=204)
