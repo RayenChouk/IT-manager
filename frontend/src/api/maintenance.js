@@ -2,8 +2,10 @@
 import apiFetch from "./client";
 
 export function getMaintenanceRecords(equipmentId = null) {
-    const params = equipmentId ? `?equipment_id=${equipmentId}` : "";
-    return apiFetch(`/maintenance/${params}`);
+    const params = new URLSearchParams();
+    if (equipmentId) params.set("equipment_id", equipmentId);
+    const query = params.toString();
+    return apiFetch(`/maintenance/${query ? `?${query}` : ""}`);
 }
 
 export function createMaintenanceRecord(data) {

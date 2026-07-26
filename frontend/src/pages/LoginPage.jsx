@@ -59,7 +59,7 @@ export default function LoginPage({ onLogin }) {
                     </button>
                 </form>
 
-                <p className={styles.hint}>Default: admin / admin123</p>
+
             </div>
         </div>
     );

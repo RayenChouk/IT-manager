@@ -139,10 +139,14 @@ export default function EquipmentPage() {
     }
 
     async function handleDelete() {
-        await deleteEquipment(deletingItem.id);
-        setDeletingItem(null);
-        refetch();
-        showToast("Equipment deleted.");
+        try {
+            await deleteEquipment(deletingItem.id);
+            setDeletingItem(null);
+            refetch();
+            showToast("Equipment deleted.");
+        } catch (err) {
+            showToast(err.message || "Failed to delete equipment.", "error");
+        }
     }
 
     return (

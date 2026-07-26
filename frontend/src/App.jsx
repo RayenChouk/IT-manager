@@ -26,14 +26,20 @@ function AppShell({ auth }) {
   const title = PAGE_TITLES[location.pathname] ?? "IT Manager";
 
   // Extract username from JWT payload (middle segment, base64 encoded)
+
+
   let username = "";
 
-  if (
-    auth.token &&
-    auth.token !== "demo-token" &&
-    auth.token.split(".").length === 3
-  ) {
-    username = JSON.parse(atob(auth.token.split(".")[1])).sub;
+  try {
+    if (
+      auth.token &&
+      auth.token !== "demo-token" &&
+      auth.token.split(".").length === 3
+    ) {
+      username = JSON.parse(atob(auth.token.split(".")[1])).sub;
+    }
+  } catch {
+    username = "";
   }
 
   return (

@@ -20,13 +20,16 @@ function StatCard({ label, value, icon, color }) {
 }
 
 export default function DashboardPage() {
-    const { data: stats, loading: statsLoading } = useFetch(getEquipmentStats);
-    const { data: equipment, loading: equipLoading } = useFetch(getEquipment);
+    const { data: stats, loading: statsLoading, error: statsError } = useFetch(getEquipmentStats);
+    const { data: equipment, loading: equipLoading, error: equipError } = useFetch(getEquipment);
 
     const recentEquipment = equipment?.slice(0, 5) ?? [];
 
     if (statsLoading || equipLoading) {
         return <div className="loading-center"><div className="spinner" /></div>;
+    }
+    if (statsError || equipError) {
+        return <div className="empty-state"><p>Failed to load dashboard data. Please try again.</p></div>;
     }
 
     return (

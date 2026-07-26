@@ -64,7 +64,16 @@ export default function LocationsPage() {
 
     async function handleCreate(data) { await createLocation(data); refetch(); showToast("Location created!"); }
     async function handleUpdate(data) { await updateLocation(editingItem.id, data); refetch(); showToast("Location updated!"); }
-    async function handleDelete() { await deleteLocation(deletingItem.id); setDeletingItem(null); refetch(); showToast("Location deleted."); }
+    async function handleDelete() {
+        try {
+            await deleteLocation(deletingItem.id);
+            setDeletingItem(null);
+            refetch();
+            showToast("Location deleted.");
+        } catch (err) {
+            showToast(err.message || "Failed to delete location.", "error");
+        }
+    }
 
     return (
         <div>
