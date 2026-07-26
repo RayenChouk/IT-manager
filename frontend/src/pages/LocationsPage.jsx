@@ -71,7 +71,7 @@ export default function LocationsPage() {
             refetch();
             showToast("Location deleted.");
         } catch (err) {
-            showToast(err.message || "Failed to delete location.", "error");
+            function showToast(message, type = "success") { setToast({ message, type }); }
         }
     }
 
