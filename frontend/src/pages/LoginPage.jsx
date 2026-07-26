@@ -30,25 +30,31 @@ export default function LoginPage({ onLogin }) {
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.field}>
-                        <label>Username</label>
+                        <label htmlFor="username">Username</label>
                         <input
+                            id="username"
+                            name="username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="admin"
+                            placeholder=""
                             required
                             autoFocus
+                            autoComplete="username"
                         />
                     </div>
 
                     <div className={styles.field}>
-                        <label>Password</label>
+                        <label htmlFor="password">Password</label>
                         <input
+                            id="password"
+                            name="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
+                            placeholder=""
                             required
+                            autoComplete="current-password"
                         />
                     </div>
 
