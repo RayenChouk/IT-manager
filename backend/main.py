@@ -12,7 +12,8 @@ from routes import auth, equipment, locations, maintenance
 
 # Create all database tables on startup if they don't exist yet.
 # In production you would use Alembic migrations instead.
-Base.metadata.create_all(bind=engine)
+
+#Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="IT Equipment Manager",

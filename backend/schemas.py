@@ -77,6 +77,13 @@ class EquipmentUpdate(BaseModel):
             raise ValueError(f"Status must be one of: {', '.join(VALID_STATUSES)}")
         return value
 
+    @field_validator("type")
+    @classmethod
+    def validate_type(cls, value: Optional[str]) -> Optional[str]:
+        if value is not None and value not in VALID_TYPES:
+            raise ValueError(f"Type must be one of: {', '.join(VALID_TYPES)}")
+        return value
+
 
 class EquipmentOut(EquipmentBase):
     id: int

@@ -11,7 +11,7 @@ from database import Base
 class Location(Base):
     """
     Represents a physical room or zone inside the building.
-    x and y store the position on the floor plan SVG (as percentage 0–100).
+   
     """
     __tablename__ = "locations"
 
