@@ -1,7 +1,8 @@
 // pages/EquipmentPage.jsx
 // Full CRUD interface for equipment with search, filter, form modal, and delete.
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
     getEquipment,
     createEquipment,
@@ -106,24 +107,70 @@ function EquipmentForm({ initial, locations, onSubmit, onClose }) {
 // ── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function EquipmentPage() {
+    const [searchParams] = useSearchParams();
+    const showExpiring = searchParams.get("expiring") === "true";
+
     const [search, setSearch] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
+    const [locationFilter, setLocationFilter] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [deletingItem, setDeletingItem] = useState(null);
     const [toast, setToast] = useState(null);
 
     const fetchEquipment = useCallback(
-        () => getEquipment({ search, type: typeFilter, status: statusFilter }),
-        [search, typeFilter, statusFilter]
+        () => getEquipment({ search, type: typeFilter, status: statusFilter, location_id: locationFilter }),
+        [search, typeFilter, statusFilter, locationFilter]
     );
 
-    const { data: equipment, loading, error, refetch } = useFetch(fetchEquipment, [search, typeFilter, statusFilter]);
+    const { data: rawEquipment, loading, error, refetch } = useFetch(fetchEquipment, [search, typeFilter, statusFilter, locationFilter]);
     const { data: locations } = useFetch(getLocations);
+
+    const equipment = useMemo(() => {
+        if (!rawEquipment) return rawEquipment;
+        if (!showExpiring) return rawEquipment;
+
+        const today = new Date();
+        const next30Days = new Date(today);
+        next30Days.setDate(today.getDate() + 30);
+
+        return rawEquipment.filter(item => {
+            if (!item.warranty_end_date) return false;
+            const endDate = new Date(item.warranty_end_date);
+            return endDate >= today && endDate <= next30Days;
+        });
+    }, [rawEquipment, showExpiring]);
 
     function showToast(message, type = "success") {
         setToast({ message, type });
+    }
+
+    function exportToCSV() {
+        if (!equipment || equipment.length === 0) return;
+
+        const headers = ["Name", "Serial Number", "Type", "Status", "Location", "Warranty End Date"];
+        const rows = equipment.map(item => {
+            // Note: Use empty string if value is null/undefined to avoid text like "null"
+            const name = item.name ? item.name.replace(/"/g, '""') : "";
+            const serial = item.serial_number ? item.serial_number.replace(/"/g, '""') : "";
+            const type = item.type || "";
+            const status = item.status || "";
+            const loc = item.location?.name ? item.location.name.replace(/"/g, '""') : "";
+            const warranty = item.warranty_end_date || "";
+            return `"${name}","${serial}","${type}","${status}","${loc}","${warranty}"`;
+        });
+
+        const csvContent = [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "equipment_export.csv");
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     async function handleCreate(data) {
@@ -153,23 +200,34 @@ export default function EquipmentPage() {
         <div>
             {/* ── Toolbar ── */}
             <div className={styles.toolbar}>
-                <input
-                    className={styles.searchInput}
-                    placeholder="🔍  Search by name or serial..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-                <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-                    <option value="">All types</option>
-                    {EQUIPMENT_TYPES.map((t) => <option key={t}>{t}</option>)}
-                </select>
-                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                    <option value="">All statuses</option>
-                    {EQUIPMENT_STATUSES.map((s) => <option key={s}>{s}</option>)}
-                </select>
-                <button className="btn-primary" onClick={() => { setEditingItem(null); setShowForm(true); }}>
-                    + Add Equipment
-                </button>
+                <div className={styles.filtersGroup}>
+                    <input
+                        className={styles.searchInput}
+                        placeholder="🔍  Search by name or serial..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+                        <option value="">All types</option>
+                        {EQUIPMENT_TYPES.map((t) => <option key={t}>{t}</option>)}
+                    </select>
+                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                        <option value="">All statuses</option>
+                        {EQUIPMENT_STATUSES.map((s) => <option key={s}>{s}</option>)}
+                    </select>
+                    <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)}>
+                        <option value="">All locations</option>
+                        {locations?.map((loc) => <option key={loc.id} value={loc.id}>{loc.name}</option>)}
+                    </select>
+                </div>
+                <div className={styles.actionsGroup}>
+                    <button className="btn-ghost" onClick={exportToCSV}>
+                        Export CSV
+                    </button>
+                    <button className="btn-primary" onClick={() => { setEditingItem(null); setShowForm(true); }}>
+                        + Add Equipment
+                    </button>
+                </div>
             </div>
 
             {/* ── Content ── */}

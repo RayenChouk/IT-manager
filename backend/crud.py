@@ -22,6 +22,7 @@ def get_all_equipment(
     search: Optional[str] = None,
     type_filter: Optional[str] = None,
     status_filter: Optional[str] = None,
+    location_filter: Optional[int] = None,
 ) -> list[models.Equipment]:
     query = db.query(models.Equipment)
 
@@ -35,6 +36,8 @@ def get_all_equipment(
         query = query.filter(models.Equipment.type == type_filter)
     if status_filter:
         query = query.filter(models.Equipment.status == status_filter)
+    if location_filter:
+        query = query.filter(models.Equipment.location_id == location_filter)
 
     return query.order_by(models.Equipment.name).all()
 

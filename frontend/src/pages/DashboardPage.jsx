@@ -3,13 +3,18 @@
 
 import { getEquipmentStats, getEquipment } from "../api/equipment";
 import { useFetch } from "../hooks/useFetch";
+import { useNavigate } from "react-router-dom";
 import StatusBadge from "../components/StatusBadge";
 import styles from "./DashboardPage.module.css";
 
 // A single stat card on the dashboard.
-function StatCard({ label, value, icon, color }) {
+function StatCard({ label, value, icon, color, onClick }) {
     return (
-        <div className={styles.statCard} style={{ borderTopColor: color }}>
+        <div
+            className={styles.statCard}
+            style={{ borderTopColor: color, cursor: onClick ? "pointer" : "default" }}
+            onClick={onClick}
+        >
             <span className={styles.statIcon}>{icon}</span>
             <div>
                 <p className={styles.statValue}>{value}</p>
@@ -20,6 +25,7 @@ function StatCard({ label, value, icon, color }) {
 }
 
 export default function DashboardPage() {
+    const navigate = useNavigate();
     const { data: stats, loading: statsLoading, error: statsError } = useFetch(getEquipmentStats);
     const { data: equipment, loading: equipLoading, error: equipError } = useFetch(getEquipment);
 
@@ -40,7 +46,13 @@ export default function DashboardPage() {
                 <StatCard label="Broken" value={stats?.broken ?? 0} icon="❌" color="var(--color-danger)" />
                 <StatCard label="Maintenance" value={stats?.maintenance ?? 0} icon="🔧" color="var(--color-warning)" />
                 <StatCard label="Inactive" value={stats?.inactive ?? 0} icon="📦" color="#64748b" />
-                <StatCard label="Expiring Soon" value={stats?.expiring_soon ?? 0} icon="⚠️" color="#f59e0b" />
+                <StatCard
+                    label="Expiring Soon"
+                    value={stats?.expiring_soon ?? 0}
+                    icon="⚠️"
+                    color="#f59e0b"
+                    onClick={() => navigate("/equipment?expiring=true")}
+                />
             </div>
 
             <div className="card" style={{ marginTop: "1.5rem" }}>

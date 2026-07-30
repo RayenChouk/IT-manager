@@ -19,10 +19,11 @@ def list_equipment(
     search: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
+    location_id: Optional[int] = Query(None),
     db: Session = Depends(get_db),
     _: schemas.TokenResponse = Depends(get_current_user),
 ):
-    return crud.get_all_equipment(db, search=search, type_filter=type, status_filter=status)
+    return crud.get_all_equipment(db, search=search, type_filter=type, status_filter=status, location_filter=location_id)
 
 
 @router.get("/stats", response_model=schemas.DashboardStats)

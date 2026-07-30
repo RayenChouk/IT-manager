@@ -2,10 +2,38 @@
 
 .toolbar {
     display: flex;
+    flex-direction: column;
     gap: 0.75rem;
     margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-    align-items: center;
+}
+
+.filtersGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.actionsGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .filtersGroup {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .filtersGroup select {
+        width: auto;
+    }
+
+    .actionsGroup {
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+    }
 }
 
 .searchInput {
