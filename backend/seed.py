@@ -18,7 +18,14 @@ def seed():
         return
 
     # ── Users ──────────────────────────────────────────────
-    admin = models.User(username="admin", hashed_password=hash_password("admin123"))
+    import os
+
+    admin = models.User(
+        username=os.getenv("ADMIN_USERNAME"),
+        hashed_password=hash_password(
+            os.getenv("ADMIN_PASSWORD")
+        )
+    )
     db.add(admin)
 
     # ── Locations ──────────────────────────────────────────
@@ -79,7 +86,7 @@ def seed():
     db.commit()
     db.close()
     print("✅ Database seeded successfully!")
-    print("   Login credentials: admin / admin123")
+    
 
 
 if __name__ == "__main__":
