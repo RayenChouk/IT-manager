@@ -7,8 +7,8 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from database import engine, Base
-from routes import auth, equipment, locations, maintenance
+from backend.database import engine, Base
+from backend.routes import auth, equipment, locations, maintenance
 
 # Create all database tables on startup if they don't exist yet.
 # In production you would use Alembic migrations instead.
